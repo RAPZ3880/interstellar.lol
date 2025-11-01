@@ -73,12 +73,13 @@ function toggleIframeHighlight() {
 
 // Time & Settings Logic
 const timeDisplay = document.getElementById('time');
-let isVisible = false; // Initial state set to false (hidden)
+let isVisible = true;
 
 function updateTime() {
     timeDisplay.textContent = new Date().toLocaleTimeString();
 }
 setInterval(updateTime, 1000);
+updateTime();
 
 function toggleTime() {
     isVisible = !isVisible;
@@ -674,43 +675,4 @@ function createSnowflake() {
 }
 
 setInterval(createSnowflake, 150);
-
-// --- New Typewriter Effect Logic ---
-function typeWriter(element, text, isTitle, speed = 100) {
-    let i = 0;
-    const interval = setInterval(() => {
-        if (i < text.length) {
-            if (isTitle) {
-                element.title += text.charAt(i);
-            } else {
-                element.textContent += text.charAt(i);
-            }
-            i++;
-        } else {
-            clearInterval(interval);
-        }
-    }, speed);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadSettings();
-
-    // 1. Initial Time State Toggle Off
-    updateTime(); // Call once to set the time text
-    timeDisplay.style.display = isVisible ? 'block' : 'none'; // Apply initial display state
-    document.getElementById('toggleButton').textContent = isVisible ? 'Hide Time' : 'Show Time';
-
-    // 2. Typewriter Effect
-    const mainTitleElement = document.getElementById('mainTitle'); // Assuming your main h1 element has this ID
-    const titleText = 'Toxins'; // The text for the browser tab and main screen
-
-    // Only run if the element exists
-    if (mainTitleElement) {
-        mainTitleElement.textContent = ''; // Clear text before typing
-        typeWriter(mainTitleElement, titleText, false, 150); // Type on main screen title
-    }
-    
-    // Type on browser tab title
-    document.title = '';
-    typeWriter(document, titleText, true, 150);
-});
+document.addEventListener('DOMContentLoaded', loadSettings);
