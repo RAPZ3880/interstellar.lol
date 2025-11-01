@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>interstellar.lol</title>
+<style>
+/* --- Dynamic CSS Variables --- */
+:root {
+    --frame-border-color: #2b003d; /* Default Purple-Dark */
+    --frame-shadow-color: #7a00ab; /* Default Purple-Neon */
+    --text-color: white; /* Added for global use */
+    --button-hover-color: #ff69b4; /* Added for global use */
+    --neon-color: #ff69b4; /* Added for global use */
+}
+
+/* Base Styles */
+body { margin:0; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background:black; color:white; font-family:Arial,sans-serif; overflow:hidden; position:relative; }
+.title-row { display:flex; align-items:baseline; justify-content:center; gap:15px; position:relative; top:-30px; }
+h1 { font-size:2.5em; color:white; text-shadow:0 0 5px #ff69b4,0 0 10px #ff69b4,0 0 20px #ff69b4,0 0 40px #ff69b4; margin:0; }
+#time { font-size:1.8em; color:white; text-shadow:0 0 5px #ff69b4,0 0 10px #ff69b4,0 0 20px #ff69b4,0 0 40px #ff69b4; margin:0; }
+
+/* Buttons */
+.button-container { position:absolute; top:20px; right:30px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+#settingsButton { position:absolute; top:20px; left:30px; background:white; color:black; border:none; padding:10px 20px; font-size:1em; cursor:pointer; border-radius:5px; transition:all 0.3s ease; text-shadow:0 0 5px #ff69b4; }
+#settingsButton:hover { background:#ff69b4; color:white; transform:scale(1.1); text-shadow:0 0 10px #fff; }
+button { background:white; color:black; border:none; padding:10px 20px; font-size:1em; cursor:pointer; border-radius:5px; transition:all 0.3s ease; text-shadow:0 0 5px #ff69b4; }
+button:hover { background:var(--button-hover-color, #ff69b4); color:white; transform:scale(1.1); text-shadow:0 0 10px #fff; }
+.gameButton { display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 10px; height: 100px; width: 100px; }
+.gameButton img { height:50px; width:50px; object-fit:contain; vertical-align:middle; margin-bottom:5px; border-radius: 5px; box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+.gameButton span { font-size: 0.8em; text-align: center; color: var(--text-color, black); }
+
+
+/* Loader/Frame */
+iframe,.gameFrame { 
+    width:85%; height:70vh; border-radius:10px; overflow:hidden; background:none; padding:0; 
+    
+    /* THEMED FRAME STYLES */
+    box-shadow:0 0 10px var(--frame-shadow-color); 
+    border: var(--iframe-border-width, 5px) solid var(--iframe-border-color, var(--frame-border-color));
+}
+
+.loaderScreen { 
+    position:absolute; top:0; left:0; width:100%; height:100%; 
+    background:black; display:none; flex-direction:column; 
+    justify-content:center; 
+    align-items:center; color:white; 
+}
+.loaderScreen input { width:60%; padding:10px; font-size:1em; border-radius:5px; border:none; outline:none; text-align:center; margin-bottom:10px; }
+.backButton,.fullscreenButton { position:absolute; top:20px; padding:10px 20px; font-size:1em; cursor:pointer; border-radius:5px; border:none; transition:background 0.3s; }
+.backButton { left:30px; background:white; color:black; }
+.backButton:hover { background:#ddd; }
+.fullscreenButton { right:30px; background:white; color:black; }
+.fullscreenButton:hover { background:var(--button-hover-color, #ff69b4); color:white; }
+
+/* Browser Controls */
+.browserControls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 85%;
+    max-width: 800px;
+}
+.browserControls input {
+    flex-grow: 1;
+    width: auto;
+}
+.browserControls button {
+    padding: 10px 15px;
+}
+
+/* Games Grid */
+#gamesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    max-width: 1000px; /* Constrain the grid size */
+    overflow-y: auto; /* Make the grid scrollable */
+    height: 70vh; /* Give it a set height to enable scrolling */
+}
+.gameButton {
+    background: var(--button-color, white);
+    color: var(--button-text-color, black);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-shadow: none; /* Clear previous text-shadow */
+    height: 120px; /* Fixed height for consistent grid look */
+    width: 100%; /* Fill grid cell */
+    box-sizing: border-box;
+}
+.gameButton:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px var(--frame-shadow-color);
+}
+.gameButton span {
+    color: var(--button-text-color, black);
+}
+
+/* --- Settings Screen Styles (omitted for brevity) --- */
+#settingsScreen { padding: 20px; }
+#settingsScreen h1 { margin-bottom: 20px; }
+#settingsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    max-width: 900px;
+    padding: 20px;
+    background: #111;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+}
+#themeSelect {
+    padding: 8px;
+    border-radius: 5px;
+    background: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    width: 200px;
+}
+.color-groups {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px 30px;
+}
+fieldset {
+    border: 1px solid #ff69b4;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 0;
+}
+legend {
+    color: #ff69b4;
+    padding: 0 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+fieldset label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+fieldset input[type="color"] {
+    width: 30px;
+    height: 30px;
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.settings-checkbox-group label {
+    justify-content: flex-start;
+    gap: 10px;
+}
+/* --- END Settings Screen Styles --- */
+
+/* --- Notepad/Calculator Screen Styles (omitted for brevity) --- */
+#notepadScreen {
+    padding: 80px 0 0 0;
+    justify-content: flex-start;
+}
+.notepad-container {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    background: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 0 20px var(--frame-shadow-color); 
+}
+#notepadText {
+    flex: 2; 
+    padding: 15px;
+    border: none;
+    resize: none;
+    background: #222;
+    color: var(--text-color, white); 
+    font-family: monospace;
+    font-size: 1.1em;
+    border-right: 2px solid #333;
+    border-radius: 10px 0 0 10px;
+    outline: none;
+}
+.calculator-box {
+    flex: 1; 
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+#calcDisplay {
+    width: 100%;
+    height: 50px;
+    background: #000;
+    color: var(--text-color, #00ff00); 
+    font-size: 2em;
+    text-align: right;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+.calc-buttons button {
+    padding: 15px 5px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background 0.1s;
+}
+.calc-buttons button:hover {
+    transform: none; 
+    filter: brightness(1.2);
+}
+.calc-buttons .operator { background: var(--button-hover-color, #ff69b4); color: var(--button-text-color, black); }
+.calc-buttons .operator:hover { filter: brightness(1.4); }
+.calc-buttons .equal { background: var(--neon-color, #00cccc); color: var(--button-text-color, black); grid-column: span 2; }
+.calc-buttons .equal:hover { filter: brightness(1.4); }
+.calc-buttons .clear { background: #a00; color: white; }
+.calc-buttons .clear:hover { background: #c00; }
+/* --- END Notepad/Calculator Screen Styles --- */
+
+/* --- FPS Counter Style (omitted for brevity) --- */
+#fpsDisplay {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #00ff00;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    font-family: monospace;
+    border-radius: 3px;
+    z-index: 10000;
+    display: none;
+}
+/* --- END FPS Counter Style --- */
+
+/* Credits Screen Specific Styling (omitted for brevity) */
+#creditsScreen { justify-content: space-between; padding-top: 80px; padding-bottom: 20px; }
+.credits-content { font-size: 2em; text-align: center; margin-bottom: auto; }
+.rainbow-glow {
+  font-size: 1.5em;
+  font-weight: bold;
+  animation: rainbow-text 4s infinite, neon-glow 1.5s ease-in-out infinite alternate;
+  display: inline-block;
+}
+@keyframes rainbow-text {
+  0% { color: #ff0000; }
+  14% { color: #ff7f00; }
+  28% { color: #ffff00; }
+  42% { color: #00ff00; }
+  56% { color: #0000ff; }
+  70% { color: #4b0082; }
+  84% { color: #9400d3; }
+  100% { color: #ff0000; }
+}
+@keyframes neon-glow {
+  0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff69b4, 0 0 30px #ff69b4, 0 0 40px #ff69b4; opacity: 0.8; }
+  100% { text-shadow: 0 0 10px #fff, 0 0 30px #fff, 0 0 50px #ff69b4, 0 0 70px #ff69b4, 0 0 90px #ff69b4; opacity: 1; }
+}
+.bottom-text {
+    font-size: 1.2em;
+    opacity: 0.25;
+    position: relative;
+    bottom: 0;
+}
+/* Snowflakes (omitted for brevity) */
+.snowflake { position:fixed; top:0; border-radius:50%; width:4px; height:4px; opacity:0.8; pointer-events:none; animation:fall linear infinite; background:white; }
+@keyframes fall { 0% { transform:translateY(0); opacity:1; } 100% { transform:translateY(100vh); opacity:0; } }
+</style>
+</head>
+<body>
+
+<div id="fpsDisplay">FPS: --</div>
+
+<div id="mainScreen">
+  <button id="settingsButton" onclick="openSettings()">Settings</button>
+  <div class="button-container">
+    <button id="toggleButton" onclick="toggleTime()">Hide Time</button>
+    <button onclick="openLoader('notepad')">Tools</button>
+    <button onclick="openLoader('real')">Website Loader</button>
+    <button onclick="openLoader('games')">Games</button>
+    <button onclick="openLoader('browser')">Browser</button>
+    <button onclick="openCredits()">Credits</button>
+  </div>
+  <div class="title-row">
+    <h1>interstellar!</h1>
+    <div id="time"></div>
+  </div>
+</div>
+
+<div id="settingsScreen" class="loaderScreen">
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>Settings</h1>
+  <div id="settingsContainer">
+      <label for="themeSelect">Select Theme: 
+        <select id="themeSelect" onchange="applyTheme(this.value)">
+          <option value="">--Choose Theme--</option>
+          <option value="toxinlol">Purple Haze</option>
+          <option value="theme1">Crimson Synth</option>
+          <option value="theme2">Arctic Byte</option>
+          <option value="theme3">Lava Flow</option>
+          <option value="theme4">Matrix Code</option>
+          <option value="theme5">Cyber Yellow</option>
+          <option value="theme6">Aqua Pulse</option>
+          <option value="theme7">Violet Dusk</option>
+          <option value="theme8">Sunblast</option>
+          <option value="theme9">Blue Shift</option>
+          <option value="theme10">Blood Moon</option>
+          <option value="theme11">Ocean Glitch</option>
+          <option value="theme12">Forest Canopy</option>
+          <option value="theme13">Golden Hour</option>
+          <option value="theme14">Deep Nebula</option>
+          <option value="theme15">Tropical Teal</option>
+          <option value="theme16">Desert Sun</option>
+        </select>
+      </label>
+      <div class="color-groups">
+          <fieldset>
+              <legend>Core Colors</legend>
+              <label>Background Color: <input type="color" id="bgColor" value="#000000" onchange="updateColors()"></label>
+              <label>Text Color: <input type="color" id="textColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Snowfall Color: <input type="color" id="snowColor" value="#ffffff" onchange="updateColors()"></label>
+          </fieldset>
+          <fieldset>
+              <legend>Glow & Effects</legend>
+              <label>Neon/Glow (Titles): <input type="color" id="neonColor" value="#ff69b4" onchange="updateColors()"></label>
+              <label>Time Text Color: <input type="color" id="timeColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Time Neon/Glow: <input type="color" id="timeNeonColor" value="#ff69b4" onchange="updateColors()"></label>
+          </fieldset>
+          <fieldset>
+              <legend>Button Colors</legend>
+              <label>Button Color: <input type="color" id="buttonColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Button Text Color: <input type="color" id="buttonTextColor" value="#000000" onchange="updateColors()"></label>
+              <label>Button Hover Color: <input type="color" id="buttonHoverColor" value="#ff69b4" onchange="updateColors()"></label>
+          </fieldset>
+          
+          <fieldset>
+              <legend>Frame & Border</legend>
+              <label>Frame Border Color: <input type="color" id="frameBorderColor" value="#2b003d" onchange="updateColors()"></label>
+              <label>Frame Shadow Color: <input type="color" id="frameShadowColor" value="#7a00ab" onchange="updateColors()"></label>
+          </fieldset>
+
+          <fieldset class="settings-checkbox-group">
+              <legend>Dev Tools</legend>
+              <label>Display FPS: <input type="checkbox" id="toggleFPS" onclick="toggleFPS()"></label>
+              <label>Highlight Iframes: <input type="checkbox" id="toggleIframes" onclick="toggleIframeHighlight()"></label>
+          </fieldset>
+      </div>
+  </div>
+</div>
+
+<div id="notepadScreen" class="loaderScreen">
+    <button class="backButton" onclick="closeLoader()">← Back</button>
+    <h1>Notepad & Calculator</h1>
+    <div class="notepad-container">
+        <textarea id="notepadText" placeholder="Type your notes here..."></textarea>
+        <div class="calculator-box">
+            <input type="text" id="calcDisplay" value="0" readonly>
+            <div class="calc-buttons">
+                <button class="clear" onclick="clearDisplay()">AC</button>
+                <button class="operator" onclick="appendOperator('%')">%</button>
+                <button class="operator" onclick="appendOperator('/')">÷</button>
+                <button class="operator" onclick="appendOperator('*')">×</button>
+                <button onclick="appendNumber(7)">7</button>
+                <button onclick="appendNumber(8)">8</button>
+                <button onclick="appendNumber(9)">9</button>
+                <button class="operator" onclick="appendOperator('-')">-</button>
+                <button onclick="appendNumber(4)">4</button>
+                <button onclick="appendNumber(5)">5</button>
+                <button onclick="appendNumber(6)">6</button>
+                <button class="operator" onclick="appendOperator('+')">+</button>
+                <button onclick="appendNumber(1)">1</button>
+                <button onclick="appendNumber(2)">2</button>
+                <button onclick="appendNumber(3)">3</button>
+                <button onclick="appendOperator('.')">.</button>
+                <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
+                <button class="equal" onclick="calculate()">=</button>
+                <button class="operator" onclick="backspace()">←</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="realLoader" class="loaderScreen">
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>interstellar</h1>
+  <input type="text" id="urlInput" placeholder="Enter a URL (e.g. https://example.com) or search term">
+  <button onclick="loadWebsite()">Load Website</button>
+  <iframe id="websiteFrame"></iframe>
+</div>
+
+<div id="gamesLoader" class="loaderScreen">
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>
+  <span style="vertical-align: 200px; font-size: 40px;">interstellar Games</span>
+  </h1>
+  
+  <div id="gamesGrid">
+      </div>
+</div>
+
+<div id="browserLoader" class="loaderScreen">
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>interstellar - Browser</h1>
+  <div class="browserControls">
+    <input type="text" id="browserInput" placeholder="Enter URL or search term">
+    <button onclick="goBrowser()">Go</button>
+    <button onclick="browserBack()">←</button>
+    <button onclick="browserForward()">→</button>
+    <button onclick="browserReload()">⟳</button>
+  </div>
+  <iframe id="browserFrame"></iframe>
+</div>
+
+<div id="gameWindow" class="loaderScreen">
+  <button class="backButton" onclick="closeGame()">← Back</button>
+  <button class="fullscreenButton" onclick="toggleFullscreen(currentGameUrl, currentGameTitle)">Launch Fullscreen</button>
+  <h1 id="gameTitle">interstellar Games</h1>
+  <div class="gameFrame" id="gameFrame">Game will appear here</div>
+</div>
+
+<div id="creditsScreen" class="loaderScreen">
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <div id="creditsContent" class="credits-content">
+    Credits to <span class="rainbow-glow">toxin.lol</span>
+  </div>
+  <div class="bottom-text">
+    hi-toxin.lol<3
+  </div>
+</div>
+
+<script>
+// Global variables
+let currentGameUrl = '';
+let currentGameTitle = '';
+// Google Translate is used as a common proxy method
+const PROXY_URL = 'https://translate.google.com/translate?sl=auto&tl=en&u=';
+
+// --- GAME COLLECTION DATA ---
+const gamecollection = {
+    // Original Games
+    'subwaysurfers': {
+        title: 'Subway Surfers',
+        url: 'https://cdn.games-static.com/subwaysurf/index.html',
+        img: 'https://tse3.mm.bing.net/th/id/OIP.THckrV-rsMX4P0KNJlK79QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'geometrydash': {
+        title: 'Geometry Dash',
+        url: 'https://geometrydash.io/',
+        img: 'https://th.bing.com/th/id/R.2a527448abbb085f6c89793cfb5f65f5?rik=A7ss82CSOJPrkg&riu=http%3a%2f%2fvignette2.wikia.nocookie.net%2fgeometry-dash%2fimages%2f9%2f90%2fGeometryDash.png%2frevision%2flatest%3fcb%3d20160224042843&ehk=Hvk2rFdCmF08iQinZYieMsLbvo4NDNdKYic8xB6GqZE%3d&risl=&pid=ImgRaw&r=0'
+    },
+    'speedstars': {
+        title: 'Speed Stars',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/speed-stars/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.PTVRAhK2goOw54IqLAk8fgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'slope': {
+        title: 'Slope',
+        url: 'https://game-resources.github.io/slope-game-master/',
+        img: 'https://tse1.explicit.bing.net/th/id/OIP.e7UxgqNm5RP_ZHPdAeV_LQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'wheelielife': {
+        title: 'Wheelie Life',
+        url: 'https://scratch.mit.edu/projects/637952906/embed', // Assuming this was the scratchgame
+        img: 'https://tse1.mm.bing.net/th/id/OIP.m_4R8V-I3Xk2-7n5x6m-oAHaHa?pid=ImgDet&rs=1'
+    },
+    'motox3m': {
+        title: 'Moto X3M',
+        url: 'https://ubg11.github.io/motox3m/',
+        img: 'https://ubg11.github.io/images/motox3m/moto-x3m-bike-race-logo.webp'
+    },
+    'ovo': {
+        title: 'OvO',
+        url: 'https://ovogame.com/',
+        img: 'https://zohoho.org/_kr/ovo.png?aaad'
+    },
+    'driftboss': {
+        title: 'Drift Boss',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/drift-boss/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.Re8tsn-YZeh8tWKFaXVwFQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'drivemad': {
+        title: 'Drive Mad',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/drive-mad/',
+        img: 'https://mathsframe.github.io/alllogo/drive-mad/logo.jpg'
+    },
+    'retrobowl': {
+        title: 'Retro Bowl',
+        url: 'https://miniclipgames.com/retro-bowl/',
+        img: 'https://tse3.mm.bing.net/th/id/OIP.791W9zkcqUsgJfC5h6GO2gHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'basketbros': {
+        title: 'Basket Bros',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/basket-bros/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.MkkFvKP67HtHUq-Rv7g7zwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'papasbr': {
+        title: 'Papa\'s Burgeria',
+        url: 'https://www.retrogames.cc/flash-games/papas-burgeria.html',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.rcAX2nBKaqNzcK6Zt7N96QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'
+    },
+    'crossyroad': {
+        title: 'Crossy Road',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/crossy-road/',
+        img: 'https://th.bing.com/th/id/R.a14d1c1943f8775a095ba54033e2ed80?rik=V7KD6RwQj4IBEw&riu=http%3a%2f%2fwww.androidpolice.com%2fwp-content%2fuploads%2f2016%2f04%2fnexus2cee_cr.png&ehk=x0CFo3ume%2bfNxewWDJMwWV8tbtXOdOq6bZKgignk7A4%3d&risl=&pid=ImgRaw&r=0'
+    },
+    'smashcarts': {
+        title: 'Smash Karts',
+        url: 'https://smashkarts.io/',
+        img: 'https://api.web.gamepix.com/assets/img/250/250/icon/smash-karts.png'
+    },
+    // *** 20 New Games Added Here ***
+    'fivenights': {
+        title: 'FNAF',
+        url: 'https://scratch.mit.edu/projects/235735165/embed',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.K8QnJ1zV8m0ZqYh8m972jAHaHa?rs=1&pid=ImgDetMain'
+    },
+    'fireboywatergirl': {
+        title: 'Fireboy & Watergirl',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/fireboy-and-watergirl-forest-temple/',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.f5L0Vl0qL-3w2hG9gL0BawHaHa?pid=ImgDet&rs=1'
+    },
+    'run3': {
+        title: 'Run 3',
+        url: 'https://www.coolmathgames.com/0-run-3',
+        img: 'https://th.bing.com/th/id/R.4397a66b5b99f36f04d70b7987053e1a?rik=mJm%2fjX8i4n7yNA&riu=http%3a%2f%2fimg.poptower.com%2fassets%2f6500%2frun-3.jpg%3fv%3d1354366050&ehk=n%2bNq7hY5%2bbjH86x40p6zYvN54W1u8Rj90d7H2O3p5vU%3d&risl=&pid=ImgRaw&r=0'
+    },
+    'flappybird': {
+        title: 'Flappy Bird',
+        url: 'https://play.flappybird.io/',
+        img: 'https://tse3.mm.bing.net/th/id/OIP.l_nI28p78_W0g7UoO3pW9gHaHa?rs=1&pid=ImgDetMain'
+    },
+    'cookieclicker': {
+        title: 'Cookie Clicker',
+        url: 'https://orteil.dashnet.org/cookieclicker/',
+        img: 'https://tse3.mm.bing.net/th/id/OIP.36N0i3lUaY-3I0Lh_zY93AHaHa?pid=ImgDet&rs=1'
+    },
+    'vex5': {
+        title: 'Vex 5',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/vex-5/',
+        img: 'https://tse2.mm.bing.net/th/id/OIP.Q9o18tFj9-r6_f6A-g2b3QHaHa?pid=ImgDet&rs=1'
+    },
+    'paperio': {
+        title: 'Paper.io 2',
+        url: 'https://paper-io.com/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.2jD9NfQxTqA_f_S-S6m-qgHaHa?rs=1&pid=ImgDetMain'
+    },
+    'madalin': {
+        title: 'Madalin Stunt Cars 2',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/madalin-stunt-cars-2/',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.z7u-R-g6o7-mY5kQ9QeTfAHaHa?rs=1&pid=ImgDetMain'
+    },
+    'agar.io': {
+        title: 'Agar.io',
+        url: 'http://agar.io/',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.3x0MvX9u272fN-0d507nEAHaEK?rs=1&pid=ImgDetMain'
+    },
+    'tetris': {
+        title: 'Tetris',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/tetris-classic/',
+        img: 'https://tse2.mm.bing.net/th/id/OIP.6Qz7eO_F8e93S-t0O-n6uwHaHa?pid=ImgDet&rs=1'
+    },
+    'minesweeper': {
+        title: 'Minesweeper',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/minesweeper/',
+        img: 'https://tse2.mm.bing.net/th/id/OIP.b07Ff978X3yv-6Gg6YjP-QHaHa?pid=ImgDet&rs=1'
+    },
+    'typingracer': {
+        title: 'Type Racer',
+        url: 'https://play.typeracer.com/',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.6D2hP_tK_5Z1Q4x6-17y_AHaHa?pid=ImgDet&rs=1'
+    },
+    'bloonstd5': {
+        title: 'Bloons TD 5',
+        url: 'https://www.ninjakiwi.com/Games/Tower-Defense/Bloons-TD-5-Web.html',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.J0S9tK3B-YfJ7p0j6w5iHAHaHa?pid=ImgDet&rs=1'
+    },
+    'happywheels': {
+        title: 'Happy Wheels',
+        url: 'https://totaljerkface.com/happy_wheels.php',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.8lJv4U7E-6eD9Q9Y7T6mKAHaHa?pid=ImgDet&rs=1'
+    },
+    'badpiggies': {
+        title: 'Bad Piggies',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/bad-piggies-online-2016/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.8Q3s9Xf7q3wXg12zE0P7hAHaHa?pid=ImgDet&rs=1'
+    },
+    'cubesurfer': {
+        title: 'Cube Surfer!',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/cube-surfer/',
+        img: 'https://tse4.mm.bing.net/th/id/OIP.c7mO-Y-N8-r0l4L8v-8KkAHaHa?pid=ImgDet&rs=1'
+    },
+    'pool': {
+        title: '8 Ball Pool',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/8-ball-pool-with-buddies/',
+        img: 'https://tse2.mm.bing.net/th/id/OIP.bN6z9J-38-r8o5M1-3mR1AHaHa?pid=ImgDet&rs=1'
+    },
+    'wordle': {
+        title: 'Wordle',
+        url: 'https://www.nytimes.com/games/wordle/index.html',
+        img: 'https://tse2.mm.bing.net/th/id/OIP.h_Y10Y2e-r5m3o4m-0f5VwHaHa?pid=ImgDet&rs=1'
+    },
+    'slope2': {
+        title: 'Slope 2',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/slope-2/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.e7UxgqNm5RP_ZHPdAeV_LQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3' // Using same icon as slope
+    },
+    'templerun2': {
+        title: 'Temple Run 2',
+        url: 'https://html5.gamedistribution.com/rvvASvLg/temple-run-2/',
+        img: 'https://tse1.mm.bing.net/th/id/OIP.iP-r3i7H-6J6Q2G0f8M1zAHaHa?pid=ImgDet&rs=1'
+    }
+};
+
+// --- GAME LOGIC ---
+function generateGameButtons() {
+    const gamesGrid = document.getElementById('gamesGrid');
+    if (!gamesGrid) return;
+    
+    gamesGrid.innerHTML = ''; // Clear existing content
+
+    for (const key in gamecollection) {
+        if (gamecollection.hasOwnProperty(key)) {
+            const gameData = gamecollection[key];
+            const button = document.createElement('button');
+            button.className = 'gameButton';
+            button.setAttribute('onclick', `openGame('${key}')`);
+            
+            // Create image element
+            const img = document.createElement('img');
+            img.src = gameData.img || ''; // Use empty string if no image URL
+            img.alt = gameData.title + ' icon';
+            
+            // Create span for title
+            const span = document.createElement('span');
+            span.textContent = gameData.title;
+
+            button.appendChild(img);
+            button.appendChild(span);
+            gamesGrid.appendChild(button);
+        }
+    }
+}
+
+function openGame(gameKey) {
+    const gameData = gamecollection[gameKey];
+    if (!gameData) {
+        alert('Game not found!');
+        return;
+    }
+
+    currentGameUrl = gameData.url;
+    currentGameTitle = gameData.title;
+
+    // Use the PROXY_URL logic for the actual game iframe
+    const proxiedUrl = PROXY_URL + encodeURIComponent(gameData.url);
+
+    const gameFrame = document.getElementById('gameFrame');
+    gameFrame.innerHTML = ''; // Clear previous content
+
+    const iframe = document.createElement('iframe');
+    iframe.src = proxiedUrl;
+    iframe.allowFullscreen = true;
+    iframe.className = 'gameFrame';
+    iframe.style.border = 'none'; // Overwrite default border
+    
+    gameFrame.appendChild(iframe);
+    
+    document.getElementById('gameTitle').textContent = currentGameTitle;
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('gamesLoader').style.display = 'none'; // Hide games list
+    document.getElementById('gameWindow').style.display = 'flex';
+}
+
+
+function closeGame() {
+    // Clear iframe src to stop game
+    document.getElementById('gameFrame').innerHTML = 'Game will appear here';
+    document.getElementById('gameWindow').style.display = 'none';
+    document.getElementById('mainScreen').style.display = 'flex';
+}
+
+function toggleFullscreen(url, title) {
+    if (!url) return;
+    // For fullscreen, use the direct URL, but it might be blocked depending on environment.
+    const proxiedUrl = PROXY_URL + encodeURIComponent(url);
+    const fullscreenWindow = window.open(proxiedUrl, '_blank');
+    if (fullscreenWindow) {
+        fullscreenWindow.document.title = title || 'Fullscreen Game';
+    } else {
+        alert('Popup blocked! Please allow popups for fullscreen mode.');
+    }
+}
+// --- END GAME LOGIC ---
+
+// --- Calculator Logic (omitted for brevity) ---
+const calcDisplay = document.getElementById('calcDisplay');
+let currentInput = '0';
+let currentOperator = null;
+let firstOperand = null;
+let waitingForSecondOperand = false;
+
+function updateDisplay() { calcDisplay.value = currentInput; }
+function operate(num1, num2, operator) {
+    if (operator === '+') return num1 + num2;
+    if (operator === '-') return num1 - num2;
+    if (operator === '*') return num1 * num2;
+    if (operator === '/') return num1 / num2;
+    return num2;
+}
+
+function appendNumber(number) {
+    if (waitingForSecondOperand) {
+        currentInput = String(number);
+        waitingForSecondOperand = false;
+    } else {
+        currentInput = currentInput === '0' ? String(number) : currentInput + number;
+    }
+    updateDisplay();
+}
+
+function appendOperator(nextOperator) {
+    const inputValue = parseFloat(currentInput);
+
+    if (nextOperator === '.') {
+        if (!currentInput.includes('.')) { currentInput += '.'; }
+        updateDisplay(); return;
+    }
+    
+    if (nextOperator === '%') {
+        currentInput = (inputValue / 100).toString();
+        updateDisplay(); return;
+    }
+
+    if (currentOperator && waitingForSecondOperand) { currentOperator = nextOperator; return; }
+
+    if (firstOperand === null) {
+        firstOperand = inputValue;
+    } else if (currentOperator) {
+        const result = operate(firstOperand, inputValue, currentOperator);
+        currentInput = String(result);
+        firstOperand = result;
+    }
+
+    waitingForSecondOperand = true;
+    currentOperator = nextOperator;
+    updateDisplay();
+}
+
+function calculate() {
+    if (currentOperator === null || waitingForSecondOperand) { return; }
+
+    const inputValue = parseFloat(currentInput);
+    const result = operate(firstOperand, inputValue, currentOperator);
+
+    currentInput = String(result);
+    firstOperand = null;
+    currentOperator = null;
+    waitingForSecondOperand = false;
+    updateDisplay();
+}
+
+function clearDisplay() {
+    currentInput = '0';
+    firstOperand = null;
+    currentOperator = null;
+    waitingForSecondOperand = false;
+    updateDisplay();
+}
+
+function backspace() {
+    if (waitingForSecondOperand) return;
+    currentInput = currentInput.slice(0, -1);
+    if (currentInput === '') { currentInput = '0'; }
+    updateDisplay();
+}
+// --- END Calculator Logic ---
+
+// --- Dev Tools Logic (omitted for brevity) ---
+const fpsDisplay = document.getElementById('fpsDisplay');
+let lastFrameTime = performance.now();
+let fpsInterval;
+
+function toggleFPS() {
+    const isChecked = document.getElementById('toggleFPS').checked;
+    if (isChecked) {
+        fpsDisplay.style.display = 'block';
+        fpsInterval = requestAnimationFrame(updateFPS);
+    } else {
+        fpsDisplay.style.display = 'none';
+        cancelAnimationFrame(fpsInterval);
+    }
+}
+
+function updateFPS(now) {
+    const delta = now - lastFrameTime;
+    lastFrameTime = now;
+    const fps = Math.round(1000 / delta);
+    fpsDisplay.textContent = 'FPS: ' + fps;
+    fpsInterval = requestAnimationFrame(updateFPS);
+}
+
+function toggleIframeHighlight() {
+    const isChecked = document.getElementById('toggleIframes').checked;
+    const root = document.documentElement;
+    if (isChecked) {
+        root.style.setProperty('--iframe-border-width', '5px');
+        root.style.setProperty('--iframe-border-color', 'red');
+    } else {
+        root.style.setProperty('--iframe-border-width', '5px');
+        root.style.setProperty('--iframe-border-color', document.getElementById('frameBorderColor').value);
+    }
+}
+// --- END Dev Tools Logic ---
+
+// Time & Settings Logic
+const timeDisplay=document.getElementById('time'); let isVisible=true;
+function updateTime(){ timeDisplay.textContent=new Date().toLocaleTimeString(); }
+setInterval(updateTime,1000); updateTime();
+function toggleTime(){ isVisible=!isVisible; timeDisplay.style.display=isVisible?'block':'none'; document.getElementById('toggleButton').textContent=isVisible?'Hide Time':'Show Time'; }
+
+function openSettings(){ 
+    document.getElementById('mainScreen').style.display='none'; 
+    document.getElementById('settingsScreen').style.display='flex'; 
+}
+
+// --- General Loader/Screen Functions ---
+function openLoader(screenId) {
+    // Hide all screens
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('settingsScreen').style.display = 'none';
+    document.getElementById('notepadScreen').style.display = 'none';
+    document.getElementById('realLoader').style.display = 'none';
+    document.getElementById('gamesLoader').style.display = 'none';
+    document.getElementById('browserLoader').style.display = 'none';
+    document.getElementById('creditsScreen').style.display = 'none';
+    document.getElementById('gameWindow').style.display = 'none';
+
+    // Show the requested screen
+    if (screenId === 'games') {
+        generateGameButtons(); // Generate buttons before showing
+        document.getElementById('gamesLoader').style.display = 'flex';
+    } else if (screenId === 'notepad') {
+        document.getElementById('notepadScreen').style.display = 'flex';
+    } else if (screenId === 'real') {
+        document.getElementById('realLoader').style.display = 'flex';
+    } else if (screenId === 'browser') {
+        document.getElementById('browserLoader').style.display = 'flex';
+    } else if (screenId === 'credits') {
+        document.getElementById('creditsScreen').style.display = 'flex';
+    } else if (document.getElementById(screenId + 'Loader')) {
+        document.getElementById(screenId + 'Loader').style.display = 'flex';
+    }
+}
+
+function closeLoader() {
+    // Hide all non-main screens
+    document.getElementById('settingsScreen').style.display = 'none';
+    document.getElementById('notepadScreen').style.display = 'none';
+    document.getElementById('realLoader').style.display = 'none';
+    document.getElementById('gamesLoader').style.display = 'none';
+    document.getElementById('browserLoader').style.display = 'none';
+    document.getElementById('creditsScreen').style.display = 'none';
+    document.getElementById('gameWindow').style.display = 'none';
+    // Show main screen
+    document.getElementById('mainScreen').style.display = 'flex';
+}
+
+function openCredits() {
+    openLoader('credits');
+}
+
+
+// --- Website Loader Logic ---
+function loadWebsite() {
+    const urlInput = document.getElementById('urlInput').value.trim();
+    if (!urlInput) {
+        alert('Please enter a URL or search term.');
+        return;
+    }
+    const websiteFrame = document.getElementById('websiteFrame');
+    
+    let targetUrl;
+    if (urlInput.startsWith('http')) {
+        targetUrl = urlInput;
+    } else {
+        // Assume it's a search term if no protocol is given
+        targetUrl = 'https://www.google.com/search?q=' + encodeURIComponent(urlInput);
+    }
+
+    // Proxy the URL
+    websiteFrame.src = PROXY_URL + encodeURIComponent(targetUrl);
+}
+
+// --- Browser Logic ---
+const browserFrame = document.getElementById('browserFrame');
+
+function goBrowser() {
+    const urlInput = document.getElementById('browserInput').value.trim();
+    if (!urlInput) {
+        alert('Please enter a URL or search term.');
+        return;
+    }
+    
+    let targetUrl;
+    if (urlInput.startsWith('http')) {
+        targetUrl = urlInput;
+    } else {
+        // Assume it's a search term if no protocol is given
+        targetUrl = 'https://www.google.com/search?q=' + encodeURIComponent(urlInput);
+    }
+
+    // Proxy the URL
+    browserFrame.src = PROXY_URL + encodeURIComponent(targetUrl);
+}
+
+function browserBack() {
+    if (browserFrame.contentWindow.history.length > 1) {
+        browserFrame.contentWindow.history.back();
+    }
+}
+
+function browserForward() {
+    browserFrame.contentWindow.history.forward();
+}
+
+function browserReload() {
+    browserFrame.contentWindow.location.reload();
+}
+
+
+// --- Settings Persistence ---
+function saveSettings() {
+    const settings = {
+        bgColor: document.getElementById('bgColor').value,
+        textColor: document.getElementById('textColor').value,
+        neonColor: document.getElementById('neonColor').value,
+        timeColor: document.getElementById('timeColor').value,
+        timeNeonColor: document.getElementById('timeNeonColor').value,
+        buttonColor: document.getElementById('buttonColor').value,
+        buttonTextColor: document.getElementById('buttonTextColor').value,
+        buttonHoverColor: document.getElementById('buttonHoverColor').value,
+        snowColor: document.getElementById('snowColor').value,
+        frameBorderColor: document.getElementById('frameBorderColor').value,
+        frameShadowColor: document.getElementById('frameShadowColor').value,
+        toggleFPS: document.getElementById('toggleFPS').checked,
+        toggleIframes: document.getElementById('toggleIframes').checked
+    };
+    try {
+        localStorage.setItem('toxins_settings', JSON.stringify(settings));
+        console.log("Settings saved.");
+    } catch (e) {
+        console.error("Failed to save settings to Local Storage.", e);
+    }
+}
+
+function loadSettings() {
+    try {
+        const storedSettings = localStorage.getItem('toxins_settings');
+        if (!storedSettings) return;
+
+        const settings = JSON.parse(storedSettings);
+        
+        // Apply colors to inputs
+        document.getElementById('bgColor').value = settings.bgColor;
+        document.getElementById('textColor').value = settings.textColor;
+        document.getElementById('neonColor').value = settings.neonColor;
+        document.getElementById('timeColor').value = settings.timeColor;
+        document.getElementById('timeNeonColor').value = settings.timeNeonColor;
+        document.getElementById('buttonColor').value = settings.buttonColor;
+        document.getElementById('buttonTextColor').value = settings.buttonTextColor;
+        document.getElementById('buttonHoverColor').value = settings.buttonHoverColor;
+        document.getElementById('snowColor').value = settings.snowColor;
+        document.getElementById('frameBorderColor').value = settings.frameBorderColor;
+        document.getElementById('frameShadowColor').value = settings.frameShadowColor;
+        
+        // Apply checkboxes
+        document.getElementById('toggleFPS').checked = settings.toggleFPS;
+        document.getElementById('toggleIframes').checked = settings.toggleIframes;
+        
+        // Apply all settings
+        updateColors(false); // Do not save again immediately on load
+        
+        // Execute side-effect functions
+        if (settings.toggleFPS) toggleFPS(); 
+        if (settings.toggleIframes) toggleIframeHighlight(); 
+
+        console.log("Settings loaded.");
+    } catch (e) {
+        console.error("Failed to load settings from Local Storage.", e);
+        // Fallback: Just update with defaults if loading failed
+        updateColors(false); 
+    }
+}
+
+/**
+ * Updates all colors and saves settings automatically, unless specified otherwise.
+ * @param {boolean} [shouldSave=true] - Whether to save the settings to Local Storage.
+ */
+function updateColors(shouldSave = true){
+  const neon=document.getElementById('neonColor').value;
+  const timeNeon=document.getElementById('timeNeonColor').value;
+  const buttonTextColor = document.getElementById('buttonTextColor').value;
+  const buttonHoverColor = document.getElementById('buttonHoverColor').value;
+  const textColor = document.getElementById('textColor').value;
+  const bgColor = document.getElementById('bgColor').value;
+  const frameBorderColor = document.getElementById('frameBorderColor').value;
+  const frameShadowColor = document.getElementById('frameShadowColor').value;
+
+  // Set CSS Variables for Theming
+  document.documentElement.style.setProperty('--text-color', textColor);
+  document.documentElement.style.setProperty('--button-hover-color', buttonHoverColor);
+  document.documentElement.style.setProperty('--button-text-color', buttonTextColor);
+  document.documentElement.style.setProperty('--neon-color', neon);
+  document.documentElement.style.setProperty('--frame-border-color', frameBorderColor);
+  document.documentElement.style.setProperty('--frame-shadow-color', frameShadowColor);
+  
+  // 1. General Styles
+  document.body.style.backgroundColor=bgColor;
+  document.body.style.color=textColor;
+  
+  // 2. Title Neon Glow
+  document.querySelectorAll('h1').forEach(h=>{ if(h!==timeDisplay) h.style.textShadow=`0 0 5px ${neon},0 0 10px ${neon},0 0 20px ${neon},0 0 40px ${neon}`; });
+  
+  // 3. Time Display 
+  timeDisplay.style.color=document.getElementById('timeColor').value;
+  timeDisplay.style.textShadow=`0 0 5px ${timeNeon},0 0 10px ${timeNeon},0 0 20px ${timeNeon},0 0 40px ${timeNeon}`;
+  
+  // 4. Buttons 
+  document.querySelectorAll('button:not(.calc-buttons button)').forEach(b=>{ 
+      b.style.backgroundColor=document.getElementById('buttonColor').value; 
+      b.style.color=buttonTextColor; 
+  });
+  
+  // 5. Apply button hover color via dynamic CSS
+  let style=document.createElement('style'); 
+  style.innerHTML=`
+      button:not(.calc-buttons button):hover{background-color:${buttonHoverColor} !important;}
+  `; 
+  
+  const oldStyle = document.getElementById('dynamic-styles');
+  if (oldStyle) { oldStyle.remove(); }
+  style.id = 'dynamic-styles';
+  document.head.appendChild(style);
+  
+  // 6. Snowflakes
+  document.querySelectorAll('.snowflake').forEach(s=>s.style.backgroundColor=document.getElementById('snowColor').value);
+  
+  // 7. Update Iframe Border
+  if (!document.getElementById('toggleIframes').checked) {
+      document.documentElement.style.setProperty('--iframe-border-color', frameBorderColor);
+  } else {
+      document.documentElement.style.setProperty('--iframe-border-color', 'red');
+  }
+
+  if (shouldSave) {
+      saveSettings();
+  }
+}
+
+const themes={
+  "toxinlol": {bg:"#000000", text:"#ffffff", neon:"#6600ff", time:"#ffffff", timeNeon:"#6600ff", button:"#000000", buttonText:"#ffffff", buttonHover:"#3700ff", snow:"#9b00ff", frameBorder:"#2b003d", frameShadow:"#7a00ab"},
+  "theme1": {bg:"#1a1a1a", text:"#f2f2f2", neon:"#ff0055", time:"#ffffff", timeNeon:"#ff0055", button:"#222222", buttonText:"#ffffff", buttonHover:"#ff3399", snow:"#ff66aa", frameBorder:"#4d001a", frameShadow:"#ff4d88"},
+  "theme2": {bg:"#0b0b30", text:"#e0e0ff", neon:"#00ffff", time:"#ffffff", timeNeon:"#00ffff", button:"#111144", buttonText:"#ffffff", buttonHover:"#00cccc", snow:"#33ffff", frameBorder:"#001a1a", frameShadow:"#00e6e6"},
+  "theme3": {bg:"#100000", text:"#ffdddd", neon:"#ff2200", time:"#ffffff", timeNeon:"#ff2200", button:"#330000", buttonText:"#ffffff", buttonHover:"#ff5500", snow:"#ff3300", frameBorder:"#330000", frameShadow:"#ff5500"},
+  "theme4": {bg:"#001100", text:"#ddffdd", neon:"#00ff33", time:"#ffffff", timeNeon:"#00ff33", button:"#003300", buttonText:"#ffffff", buttonHover:"#00cc33", snow:"#00ff66", frameBorder:"#002200", frameShadow:"#00cc00"},
+  "theme5": {bg:"#111111", text:"#ffffaa", neon:"#ffff00", time:"#ffffff", timeNeon:"#ffff00", button:"#222222", buttonText:"#000000", buttonHover:"#ffff55", snow:"#ffff88", frameBorder:"#333300", frameShadow:"#ffff00"},
+  "theme6": {bg:"#222222", text:"#aaffff", neon:"#00aaff", time:"#ffffff", timeNeon:"#00aaff", button:"#333333", buttonText:"#ffffff", buttonHover:"#33ccff", snow:"#66ddff", frameBorder:"#002233", frameShadow:"#0099ff"},
+  "theme7": {bg:"#0a0a1a", text:"#ffaaff", neon:"#ff00cc", time:"#ffffff", timeNeon:"#ff00cc", button:"#1a001a", buttonText:"#ffffff", buttonHover:"#ff55ff", snow:"#ff66ff", frameBorder:"#330033", frameShadow:"#ff00ff"},
+  "theme8": {bg:"#101010", text:"#ffccaa", neon:"#ffaa00", time:"#ffffff", timeNeon:"#ffaa00", button:"#222211", buttonText:"#000000", buttonHover:"#ffdd33", snow:"#ffaa33", frameBorder:"#332200", frameShadow:"#ffaa00"},
+  "theme9": {bg:"#000022", text:"#aaccff", neon:"#4466ff", time:"#ffffff", timeNeon:"#4466ff", button:"#000044", buttonText:"#ffffff", buttonHover:"#6688ff", snow:"#99bbff", frameBorder:"#000033", frameShadow:"#6666ff"},
+  "theme10": {bg:"#220000", text:"#ffaaaa", neon:"#ff2222", time:"#ffffff", timeNeon:"#ff2222", button:"#440000", buttonText:"#ffffff", buttonHover:"#ff5555", snow:"#ff8888", frameBorder:"#440000", frameShadow:"#ff3333"},
+  "theme11": {bg:"#001122", text:"#aaffff", neon:"#22ccff", time:"#ffffff", timeNeon:"#22ccff", button:"#002244", buttonText:"#ffffff", buttonHover:"#44eeff", snow:"#66ffff", frameBorder:"#002244", frameShadow:"#33ccff"},
+  "theme12": {bg:"#112211", text:"#ddffaa", neon:"#66ff33", time:"#ffffff", timeNeon:"#66ff33", button:"#223322", buttonText:"#ffffff", buttonHover:"#99ff66", snow:"#aaff77", frameBorder:"#223322", frameShadow:"#33ff00"},
+  "theme13": {bg:"#222211", text:"#ffffcc", neon:"#ffff33", time:"#ffffff", timeNeon:"#ffff33", button:"#333322", buttonText:"#000000", buttonHover:"#ffff66", snow:"#ffff88", frameBorder:"#444400", frameShadow:"#ffff66"},
+  "theme14": {bg:"#110022", text:"#ddccff", neon:"#aa00ff", time:"#ffffff", timeNeon:"#aa00ff", button:"#110022", buttonText:"#ffffff", buttonHover:"#cc00ff", snow:"#ff66ff", frameBorder:"#330055", frameShadow:"#aa00ff"},
+  "theme15": {bg:"#001a1a", text:"#ccffff", neon:"#00cccc", time:"#ffffff", timeNeon:"#00cccc", button:"#003333", buttonText:"#ffffff", buttonHover:"#33ffff", snow:"#66ffff", frameBorder:"#003333", frameShadow:"#00ffcc"},
+  "theme16": {bg:"#221100", text:"#ffeecc", neon:"#ff9900", time:"#ffffff", timeNeon:"#ff9900", button:"#442200", buttonText:"#ffffff", buttonHover:"#ffbb33", snow:"#ffaa66", frameBorder:"#442200", frameShadow:"#ff9933"},
+};
+
+
+function applyTheme(themeName) {
+    if (!themes[themeName]) return;
+
+    const t = themes[themeName];
+    // Update input fields
+    document.getElementById('bgColor').value = t.bg;
+    document.getElementById('textColor').value = t.text;
+    document.getElementById('neonColor').value = t.neon;
+    document.getElementById('timeColor').value = t.time;
+    document.getElementById('timeNeonColor').value = t.timeNeon;
+    document.getElementById('buttonColor').value = t.button;
+    document.getElementById('buttonTextColor').value = t.buttonText;
+    document.getElementById('buttonHoverColor').value = t.buttonHover;
+    document.getElementById('snowColor').value = t.snow;
+    document.getElementById('frameBorderColor').value = t.frameBorder;
+    document.getElementById('frameShadowColor').value = t.frameShadow;
+
+    // Apply and save the new colors
+    updateColors(true);
+}
+
+
+// Call loadSettings and generateGameButtons on page load
+window.onload = function() {
+    loadSettings();
+    // generateGameButtons is now called when 'Games' is opened via openLoader('games')
+    // We can also call it here to prep the data, but it's not necessary to render it yet.
+};
+// --- END Settings Persistence ---
+</script>
+</body>
+</html>
