@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="shortcut icon" type="x-icon"	href="favicon (1).png">
 <title>interstellar.lol</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -15,7 +14,6 @@
   <button id="settingsButton" onclick="openSettings()">Settings</button>
   <div class="button-container">
     <button id="toggleButton" onclick="toggleTime()">Hide Time</button>
-    <button onclick="openLoader('notepad')">Tools</button>
     <button onclick="openLoader('real')">Website Loader</button>
     <button onclick="openLoader('games')">Games</button>
     <button onclick="openLoader('browser')">Browser</button>
@@ -86,38 +84,6 @@
           </fieldset>
       </div>
   </div>
-</div>
-
-<div id="notepadScreen" class="loaderScreen">
-    <button class="backButton" onclick="closeLoader()">← Back</button>
-    <h1>Notepad & Calculator</h1>
-    <div class="notepad-container">
-        <textarea id="notepadText" placeholder="Type your notes here..."></textarea>
-        <div class="calculator-box">
-            <input type="text" id="calcDisplay" value="0" readonly>
-            <div class="calc-buttons">
-                <button class="clear" onclick="clearDisplay()">AC</button>
-                <button class="operator" onclick="appendOperator('%')">%</button>
-                <button class="operator" onclick="appendOperator('/')">÷</button>
-                <button class="operator" onclick="appendOperator('*')">×</button>
-                <button onclick="appendNumber(7)">7</button>
-                <button onclick="appendNumber(8)">8</button>
-                <button onclick="appendNumber(9)">9</button>
-                <button class="operator" onclick="appendOperator('-')">-</button>
-                <button onclick="appendNumber(4)">4</button>
-                <button onclick="appendNumber(5)">5</button>
-                <button onclick="appendNumber(6)">6</button>
-                <button class="operator" onclick="appendOperator('+')">+</button>
-                <button onclick="appendNumber(1)">1</button>
-                <button onclick="appendNumber(2)">2</button>
-                <button onclick="appendNumber(3)">3</button>
-                <button class="operator" onclick="appendOperator('.')">.</button>
-                <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
-                <button class="equal" onclick="calculate()">=</button>
-                <button class="operator" onclick="backspace()">←</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div id="realLoader" class="loaderScreen">
