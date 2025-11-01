@@ -270,6 +270,7 @@ function getGameDetails(game) {
     if(game==='papasbr'){ url="https://gamecollections.me/game/3kh0-assets-main/papaspizzaria/"; title='Papas Burgeria';}
     if(game==='crossyroad'){ url="https://gamecollections.me/game/3kh0-assets-main/crossyroad/"; title='Crossy Road';}
 	if(game==='smashcarts'){ url="https://gamecollections.me/game/3kh0-assets-main/smashkarts/"; title='Smash Karts';}
+	if(game==='dogeminer'){ url="https://gamecollections.me/game/3kh0-assets-main/DogeMiner/"; title='Doge Miner';}
     return { url, title };
 }
 
