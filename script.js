@@ -2,89 +2,44 @@ let currentGameUrl = '';
 let currentGameTitle = '';
 const PROXY_URL = 'https://translate.google.com/translate?sl=auto&tl=en&u=';
 
-// Calculator Logic
-const calcDisplay = document.getElementById('calcDisplay');
-let currentInput = '0';
-let currentOperator = null;
-let firstOperand = null;
-let waitingForSecondOperand = false;
-
-function updateDisplay() { calcDisplay.value = currentInput; }
-function operate(num1, num2, operator) {
-    if (operator === '+') return num1 + num2;
-    if (operator === '-') return num1 - num2;
-    if (operator === '*') return num1 * num2;
-    if (operator === '/') return num1 / num2;
-    return num2;
+// --- SETTINGS THEME-DEPENDENT COLORS LOGIC ---
+function setSettingsColors(themeObj) {
+    // Settings panel background and text
+    document.documentElement.style.setProperty('--settings-bg', themeObj.bg || '#111');
+    document.documentElement.style.setProperty('--settings-text', themeObj.text || '#fff');
+    document.documentElement.style.setProperty('--settings-fieldset-bg', themeObj.bg ? shadeColor(themeObj.bg, 12) : '#191929');
+    document.documentElement.style.setProperty('--settings-border', themeObj.neon || '#ff69b4');
+    // Color input border (handled via CSS :focus)
+    // Set color input background for better visibility
+    document.querySelectorAll('#settingsScreen input[type="color"]').forEach(c=>{
+        c.style.background = themeObj.bg || '#111';
+    });
 }
 
-function appendNumber(number) {
-    if (waitingForSecondOperand) {
-        currentInput = String(number);
-        waitingForSecondOperand = false;
-    } else {
-        currentInput = currentInput === '0' ? String(number) : currentInput + number;
-    }
-    updateDisplay();
+// Helper: shade a color for fieldset background
+function shadeColor(color, percent) {
+    // Only supports hex colors: #rrggbb
+    if (!color || color.length !== 7) return color;
+    let R = parseInt(color.substring(1,3),16);
+    let G = parseInt(color.substring(3,5),16);
+    let B = parseInt(color.substring(5,7),16);
+
+    R = Math.floor(R * (100 + percent) / 100);
+    G = Math.floor(G * (100 + percent) / 100);
+    B = Math.floor(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;
+    G = (G<255)?G:255;
+    B = (B<255)?B:255;
+
+    const RR = (R.toString(16).length==1) ? "0"+R.toString(16) : R.toString(16);
+    const GG = (G.toString(16).length==1) ? "0"+G.toString(16) : G.toString(16);
+    const BB = (B.toString(16).length==1) ? "0"+B.toString(16) : B.toString(16);
+
+    return "#"+RR+GG+BB;
 }
 
-function appendOperator(nextOperator) {
-    const inputValue = parseFloat(currentInput);
-
-    if (nextOperator === '.') {
-        if (!currentInput.includes('.')) { currentInput += '.'; }
-        updateDisplay(); return;
-    }
-    
-    if (nextOperator === '%') {
-        currentInput = (inputValue / 100).toString();
-        updateDisplay(); return;
-    }
-
-    if (currentOperator && waitingForSecondOperand) { currentOperator = nextOperator; return; }
-
-    if (firstOperand === null) {
-        firstOperand = inputValue;
-    } else if (currentOperator) {
-        const result = operate(firstOperand, inputValue, currentOperator);
-        currentInput = String(result);
-        firstOperand = result;
-    }
-
-    waitingForSecondOperand = true;
-    currentOperator = nextOperator;
-    updateDisplay();
-}
-
-function calculate() {
-    if (currentOperator === null || waitingForSecondOperand) { return; }
-
-    const inputValue = parseFloat(currentInput);
-    const result = operate(firstOperand, inputValue, currentOperator);
-
-    currentInput = String(result);
-    firstOperand = null;
-    currentOperator = null;
-    waitingForSecondOperand = false;
-    updateDisplay();
-}
-
-function clearDisplay() {
-    currentInput = '0';
-    firstOperand = null;
-    currentOperator = null;
-    waitingForSecondOperand = false;
-    updateDisplay();
-}
-
-function backspace() {
-    if (waitingForSecondOperand) return;
-    currentInput = currentInput.slice(0, -1);
-    if (currentInput === '') { currentInput = '0'; }
-    updateDisplay();
-}
-
-// Dev Tools Logic
+// --- Dev Tools Logic ---
 const fpsDisplay = document.getElementById('fpsDisplay');
 let lastFrameTime = performance.now();
 let fpsInterval;
@@ -131,7 +86,7 @@ function openSettings(){
     document.getElementById('settingsScreen').style.display='flex'; 
 }
 
-// Settings Persistence
+// --- Settings Persistence ---
 function saveSettings() {
     const settings = {
         bgColor: document.getElementById('bgColor').value,
@@ -150,10 +105,8 @@ function saveSettings() {
     };
     try {
         localStorage.setItem('toxins_settings', JSON.stringify(settings));
-        console.log("Settings saved.");
-    } catch (e) {
-        console.error("Failed to save settings to Local Storage.", e);
-    }
+        // No console.log for production
+    } catch (e) {}
 }
 
 function loadSettings() {
@@ -162,8 +115,6 @@ function loadSettings() {
         if (!storedSettings) return;
 
         const settings = JSON.parse(storedSettings);
-        
-        // Apply colors to inputs
         document.getElementById('bgColor').value = settings.bgColor;
         document.getElementById('textColor').value = settings.textColor;
         document.getElementById('neonColor').value = settings.neonColor;
@@ -175,21 +126,12 @@ function loadSettings() {
         document.getElementById('snowColor').value = settings.snowColor;
         document.getElementById('frameBorderColor').value = settings.frameBorderColor;
         document.getElementById('frameShadowColor').value = settings.frameShadowColor;
-        
-        // Apply checkboxes
         document.getElementById('toggleFPS').checked = settings.toggleFPS;
         document.getElementById('toggleIframes').checked = settings.toggleIframes;
-        
-        // Apply all settings
-        updateColors(false); // Do not save again immediately on load
-        
-        // Execute side-effect functions
+        updateColors(false); 
         if (settings.toggleFPS) toggleFPS(); 
         if (settings.toggleIframes) toggleIframeHighlight(); 
-
-        console.log("Settings loaded.");
     } catch (e) {
-        console.error("Failed to load settings from Local Storage.", e);
         updateColors(false); 
     }
 }
@@ -210,15 +152,21 @@ function updateColors(shouldSave = true){
   document.documentElement.style.setProperty('--neon-color', neon);
   document.documentElement.style.setProperty('--frame-border-color', frameBorderColor);
   document.documentElement.style.setProperty('--frame-shadow-color', frameShadowColor);
-  
+
+  // Synchronize settings panel color
+  setSettingsColors({
+      bg: bgColor,
+      text: textColor,
+      neon: neon
+  });
+
   document.body.style.backgroundColor=bgColor;
   document.body.style.color=textColor;
   
   document.querySelectorAll('h1').forEach(h=>{ if(h!==timeDisplay) h.style.textShadow=`0 0 5px ${neon},0 0 10px ${neon},0 0 20px ${neon},0 0 40px ${neon}`; });
-  
   timeDisplay.style.color=document.getElementById('timeColor').value;
   timeDisplay.style.textShadow=`0 0 5px ${timeNeon},0 0 10px ${timeNeon},0 0 20px ${timeNeon},0 0 40px ${timeNeon}`;
-  
+
   document.querySelectorAll('button:not(.calc-buttons button)').forEach(b=>{ 
       b.style.backgroundColor=document.getElementById('buttonColor').value; 
       b.style.color=buttonTextColor; 
@@ -233,18 +181,14 @@ function updateColors(shouldSave = true){
   if (oldStyle) { oldStyle.remove(); }
   style.id = 'dynamic-styles';
   document.head.appendChild(style);
-  
+
   document.querySelectorAll('.snowflake').forEach(s=>s.style.backgroundColor=document.getElementById('snowColor').value);
-  
   if (!document.getElementById('toggleIframes').checked) {
       document.documentElement.style.setProperty('--iframe-border-color', frameBorderColor);
   } else {
       document.documentElement.style.setProperty('--iframe-border-color', 'red');
   }
-
-  if (shouldSave) {
-      saveSettings();
-  }
+  if (shouldSave) saveSettings();
 }
 
 const themes={
@@ -280,7 +224,8 @@ function applyTheme(name){
     document.getElementById('snowColor').value=t.snow; 
     document.getElementById('frameBorderColor').value=t.frameBorder; 
     document.getElementById('frameShadowColor').value=t.frameShadow; 
-    updateColors(); 
+    updateColors();
+    setSettingsColors(t);
 }
 
 // Loaders & Navigation
@@ -291,7 +236,6 @@ function closeLoader(){
     document.getElementById('creditsScreen').style.display='none'; 
     document.getElementById('settingsScreen').style.display='none'; 
     document.getElementById('gameWindow').style.display='none'; 
-    document.getElementById('notepadScreen').style.display='none';
     document.getElementById('mainScreen').style.display='flex'; 
     document.getElementById('gameFrame').innerHTML='Game will appear here';
 }
@@ -301,7 +245,6 @@ function openLoader(type){
     document.getElementById('realLoader').style.display=type==='real'?'flex':'none'; 
     document.getElementById('gamesLoader').style.display=type==='games'?'flex':'none'; 
     document.getElementById('browserLoader').style.display=type==='browser'?'flex':'none'; 
-    document.getElementById('notepadScreen').style.display=type==='notepad'?'flex':'none';
 }
 
 function openCredits(){
@@ -446,14 +389,12 @@ function browserBack(){
         browserFrame.src = historyStack[historyIndex];
     }
 }
-
 function browserForward(){ 
     if(historyIndex < historyStack.length - 1){ 
         historyIndex++; 
         browserFrame.src = historyStack[historyIndex];
     }
 }
-
 function browserReload(){ 
     if(historyIndex >= 0) {
         browserFrame.src = historyStack[historyIndex];
@@ -467,5 +408,4 @@ let snowflakes=0;
 function createSnowflake(){ if(snowflakes>100) return; snowflakes++; const s=document.createElement('div'); s.classList.add('snowflake'); s.style.left=Math.random()*100+'vw'; s.style.width=s.style.height=(Math.random()*2+2)+'px'; s.style.animationDuration=Math.random()*5+5+'s'; s.style.backgroundColor=document.getElementById('snowColor')?.value||'#ffffff'; document.body.appendChild(s); setTimeout(()=>{ s.remove(); snowflakes--; },10000); }
 setInterval(createSnowflake,150);
 
-// Initialize colors on load
 document.addEventListener('DOMContentLoaded', loadSettings);
