@@ -4,183 +4,180 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>interstellar.lol</title>
-<link rel="stylesheet" href="style.css"> 
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="fpsDisplay">FPS: --</div>
 
 <div id="mainScreen">
-  <button id="settingsButton" onclick="openSettings()">Settings</button>
-  <div class="button-container">
-    <button id="toggleButton" onclick="toggleTime()">Hide Time</button>
-    <button onclick="openLoader('notepad')">Tools</button>
-    <button onclick="openLoader('real')">Website Loader</button>
-    <button onclick="openLoader('games')">Games</button>
-    <button onclick="openLoader('browser')">Browser</button>
-    <button onclick="openCredits()">Credits</button>
-  </div>
-  <div class="title-row">
-    <h1>interstellar!</h1>
-    <div id="time"></div>
-  </div>
+  <button id="settingsButton" onclick="openSettings()">Settings</button>
+  <div class="button-container">
+    <button id="toggleButton" onclick="toggleTime()">Hide Time</button>
+    <button onclick="openLoader('notepad')">Tools</button>
+    <button onclick="openLoader('real')">Website Loader</button>
+    <button onclick="openLoader('games')">Games</button>
+    <button onclick="openLoader('browser')">Browser</button>
+    <button onclick="openCredits()">Credits</button>
+  </div>
+  <div class="title-row">
+    <h1>interstellar!</h1>
+    <div id="time"></div>
+  </div>
 </div>
 
 <div id="settingsScreen" class="loaderScreen">
-  <button class="backButton" onclick="closeLoader()">← Back</button>
-  <h1>Settings</h1>
-  <div id="settingsContainer">
-      <label for="themeSelect">Select Theme: 
-        <select id="themeSelect" onchange="applyTheme(this.value)">
-          <option value="">--Choose Theme--</option>
-          <option value="toxinlol">Purple Haze</option>
-          <option value="theme1">Crimson Synth</option>
-          <option value="theme2">Arctic Byte</option>
-          <option value="theme3">Lava Flow</option>
-          <option value="theme4">Matrix Code</option>
-          <option value="theme5">Cyber Yellow</option>
-          <option value="theme6">Aqua Pulse</option>
-          <option value="theme7">Violet Dusk</option>
-          <option value="theme8">Sunblast</option>
-          <option value="theme9">Blue Shift</option>
-          <option value="theme10">Blood Moon</option>
-          <option value="theme11">Ocean Glitch</option>
-          <option value="theme12">Forest Canopy</option>
-          <option value="theme13">Golden Hour</option>
-          <option value="theme14">Deep Nebula</option>
-          <option value="theme15">Tropical Teal</option>
-          <option value="theme16">Desert Sun</option>
-        </select>
-      </label>
-      <div class="color-groups">
-          <fieldset>
-              <legend>Core Colors</legend>
-              <label>Background Color: <input type="color" id="bgColor" value="#000000" onchange="updateColors()"></label>
-              <label>Text Color: <input type="color" id="textColor" value="#ffffff" onchange="updateColors()"></label>
-              <label>Snowfall Color: <input type="color" id="snowColor" value="#ffffff" onchange="updateColors()"></label>
-          </fieldset>
-          <fieldset>
-              <legend>Glow & Effects</legend>
-              <label>Neon/Glow (Titles): <input type="color" id="neonColor" value="#ff69b4" onchange="updateColors()"></label>
-              <label>Time Text Color: <input type="color" id="timeColor" value="#ffffff" onchange="updateColors()"></label>
-              <label>Time Neon/Glow: <input type="color" id="timeNeonColor" value="#ff69b4" onchange="updateColors()"></label>
-          </fieldset>
-          <fieldset>
-              <legend>Button Colors</legend>
-              <label>Button Color: <input type="color" id="buttonColor" value="#ffffff" onchange="updateColors()"></label>
-              <label>Button Text Color: <input type="color" id="buttonTextColor" value="#000000" onchange="updateColors()"></label>
-              <label>Button Hover Color: <input type="color" id="buttonHoverColor" value="#ff69b4" onchange="updateColors()"></label>
-          </fieldset>
-          
-          <fieldset>
-              <legend>Frame & Border</legend>
-              <label>Frame Border Color: <input type="color" id="frameBorderColor" value="#2b003d" onchange="updateColors()"></label>
-              <label>Frame Shadow Color: <input type="color" id="frameShadowColor" value="#7a00ab" onchange="updateColors()"></label>
-          </fieldset>
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>Settings</h1>
+  <div id="settingsContainer">
+      <label for="themeSelect">Select Theme: 
+        <select id="themeSelect" onchange="applyTheme(this.value)">
+          <option value="">--Choose Theme--</option>
+          <option value="toxinlol">Purple Haze</option>
+          <option value="theme1">Crimson Synth</option>
+          <option value="theme2">Arctic Byte</option>
+          <option value="theme3">Lava Flow</option>
+          <option value="theme4">Matrix Code</option>
+          <option value="theme5">Cyber Yellow</option>
+          <option value="theme6">Aqua Pulse</option>
+          <option value="theme7">Violet Dusk</option>
+          <option value="theme8">Sunblast</option>
+          <option value="theme9">Blue Shift</option>
+          <option value="theme10">Blood Moon</option>
+          <option value="theme11">Ocean Glitch</option>
+          <option value="theme12">Forest Canopy</option>
+          <option value="theme13">Golden Hour</option>
+          <option value="theme14">Deep Nebula</option>
+          <option value="theme15">Tropical Teal</option>
+          <option value="theme16">Desert Sun</option>
+        </select>
+      </label>
+      <div class="color-groups">
+          <fieldset>
+              <legend>Core Colors</legend>
+              <label>Background Color: <input type="color" id="bgColor" value="#000000" onchange="updateColors()"></label>
+              <label>Text Color: <input type="color" id="textColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Snowfall Color: <input type="color" id="snowColor" value="#ffffff" onchange="updateColors()"></label>
+          </fieldset>
+          <fieldset>
+              <legend>Glow & Effects</legend>
+              <label>Neon/Glow (Titles): <input type="color" id="neonColor" value="#ff69b4" onchange="updateColors()"></label>
+              <label>Time Text Color: <input type="color" id="timeColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Time Neon/Glow: <input type="color" id="timeNeonColor" value="#ff69b4" onchange="updateColors()"></label>
+          </fieldset>
+          <fieldset>
+              <legend>Button Colors</legend>
+              <label>Button Color: <input type="color" id="buttonColor" value="#ffffff" onchange="updateColors()"></label>
+              <label>Button Text Color: <input type="color" id="buttonTextColor" value="#000000" onchange="updateColors()"></label>
+              <label>Button Hover Color: <input type="color" id="buttonHoverColor" value="#ff69b4" onchange="updateColors()"></label>
+          </fieldset>
+          
+          <fieldset>
+              <legend>Frame & Border</legend>
+              <label>Frame Border Color: <input type="color" id="frameBorderColor" value="#2b003d" onchange="updateColors()"></label>
+              <label>Frame Shadow Color: <input type="color" id="frameShadowColor" value="#7a00ab" onchange="updateColors()"></label>
+          </fieldset>
 
-          <fieldset class="settings-checkbox-group">
-              <legend>Dev Tools</legend>
-              <label>Display FPS: <input type="checkbox" id="toggleFPS" onclick="toggleFPS()"></label>
-              <label>Highlight Iframes: <input type="checkbox" id="toggleIframes" onclick="toggleIframeHighlight()"></label>
-          </fieldset>
-      </div>
-  </div>
+          <fieldset class="settings-checkbox-group">
+              <legend>Dev Tools</legend>
+              <label>Display FPS: <input type="checkbox" id="toggleFPS" onclick="toggleFPS()"></label>
+              <label>Highlight Iframes: <input type="checkbox" id="toggleIframes" onclick="toggleIframeHighlight()"></label>
+          </fieldset>
+      </div>
+  </div>
 </div>
 
 <div id="notepadScreen" class="loaderScreen">
-    <button class="backButton" onclick="closeLoader()">← Back</button>
-    <h1>Notepad & Calculator</h1>
-    <div class="notepad-container">
-        <textarea id="notepadText" placeholder="Type your notes here..."></textarea>
-        <div class="calculator-box">
-            <input type="text" id="calcDisplay" value="0" readonly>
-            <div class="calc-buttons">
-                <button class="clear" onclick="clearDisplay()">AC</button>
-                <button class="operator" onclick="appendOperator('%')">%</button>
-                <button class="operator" onclick="appendOperator('/')">÷</button>
-                <button class="operator" onclick="appendOperator('*')">×</button>
-                <button onclick="appendNumber(7)">7</button>
-                <button onclick="appendNumber(8)">8</button>
-                <button onclick="appendNumber(9)">9</button>
-                <button class="operator" onclick="appendOperator('-')">-</button>
-                <button onclick="appendNumber(4)">4</button>
-                <button onclick="appendNumber(5)">5</button>
-                <button onclick="appendNumber(6)">6</button>
-                <button class="operator" onclick="appendOperator('+')">+</button>
-                <button onclick="appendNumber(1)">1</button>
-                <button onclick="appendNumber(2)">2</button>
-                <button onclick="appendNumber(3)">3</button>
-                <button onclick="appendOperator('.')">.</button>
-                <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
-                <button class="equal" onclick="calculate()">=</button>
-                <button class="operator" onclick="backspace()">←</button>
-            </div>
-        </div>
-    </div>
+    <button class="backButton" onclick="closeLoader()">← Back</button>
+    <h1>Notepad & Calculator</h1>
+    <div class="notepad-container">
+        <textarea id="notepadText" placeholder="Type your notes here..."></textarea>
+        <div class="calculator-box">
+            <input type="text" id="calcDisplay" value="0" readonly>
+            <div class="calc-buttons">
+                <button class="clear" onclick="clearDisplay()">AC</button>
+                <button class="operator" onclick="appendOperator('%')">%</button>
+                <button class="operator" onclick="appendOperator('/')">÷</button>
+                <button class="operator" onclick="appendOperator('*')">×</button>
+                <button onclick="appendNumber(7)">7</button>
+                <button onclick="appendNumber(8)">8</button>
+                <button onclick="appendNumber(9)">9</button>
+                <button class="operator" onclick="appendOperator('-')">-</button>
+                <button onclick="appendNumber(4)">4</button>
+                <button onclick="appendNumber(5)">5</button>
+                <button onclick="appendNumber(6)">6</button>
+                <button class="operator" onclick="appendOperator('+')">+</button>
+                <button onclick="appendNumber(1)">1</button>
+                <button onclick="appendNumber(2)">2</button>
+                <button onclick="appendNumber(3)">3</button>
+                <button class="operator" onclick="appendOperator('.')">.</button>
+                <button onclick="appendNumber(0)" style="grid-column: span 2;">0</button>
+                <button class="equal" onclick="calculate()">=</button>
+                <button class="operator" onclick="backspace()">←</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="realLoader" class="loaderScreen">
-  <button class="backButton" onclick="closeLoader()">← Back</button>
-  <h1>interstellar</h1>
-  <input type="text" id="urlInput" placeholder="Enter a URL (e.g. https://example.com) or search term">
-  <button onclick="loadWebsite()">Load Website</button>
-  <iframe id="websiteFrame"></iframe>
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>interstellar</h1>
+  <input type="text" id="urlInput" placeholder="Enter a URL (e.g. https://example.com) or search term">
+  <button onclick="loadWebsite()">Load Website</button>
+  <iframe id="websiteFrame"></iframe>
 </div>
 
 <div id="gamesLoader" class="loaderScreen">
-  <button class="backButton" onclick="closeLoader()">← Back</button>
-  <h1>
-  <span style="vertical-align: 200px; font-size: 40px;">interstellar Games</span>
-  </h1>
-  
-  
-  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
-    <button class="gameButton" onclick="openGame('subway')"><img src="https://tse3.mm.bing.net/th/id/OIP.THckrV-rsMX4P0KNJlK79QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Subway Surfers</button>
-    <button class="gameButton" onclick="openGame('geometrydash')"><img src="https://th.bing.com/th/id/R.2a527448abbb085f6c89793cfb5f65f5?rik=A7ss82CSOJPrkg&riu=http%3a%2f%2fvignette2.wikia.nocookie.net%2fgeometry-dash%2fimages%2f9%2f90%2fGeometryDash.png%2frevision%2flatest%3fcb%3d20160224042843&ehk=Hvk2rFdCmF08iQinZYieMsLbvo4NDNdKYic8xB6GqZE%3d&risl=&pid=ImgRaw&r=0">Geometry Dash</button>
-    <button class="gameButton" onclick="openGame('speedstars')"><img src="https://tse1.mm.bing.net/th/id/OIP.PTVRAhK2goOw54IqLAk8fgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Speed Stars</button>
-    <button class="gameButton" onclick="openGame('slope')"><img src="https://tse1.explicit.bing.net/th/id/OIP.e7UxgqNm5RP_ZHPdAeV_LQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3">Slope</button>
-    <button class="gameButton" onclick="openGame('scratchgame')"><img src="">Wheelie Life</button>
-    <button class="gameButton" onclick="openGame('motox3m')"><img src="https://ubg11.github.io/images/motox3m/moto-x3m-bike-race-logo.webp">Moto X3M</button>
-    <button class="gameButton" onclick="openGame('ovo')"><img src="https://zohoho.org/_kr/ovo.png?aaad">OvO</button>
-    <button class="gameButton" onclick="openGame('driftboss')"><img src="https://tse1.mm.bing.net/th/id/OIP.Re8tsn-YZeh8tWKFaXVwFQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Drift Boss</button>
-    <button class="gameButton" onclick="openGame('drivemad')"><img src="https://mathsframe.github.io/alllogo/drive-mad/logo.jpg">Drive Mad</button>
-    <button class="gameButton" onclick="openGame('retrobowl')"><img src="https://tse3.mm.bing.net/th/id/OIP.791W9zkcqUsgJfC5h6GO2gHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Retro Bowl</button>
-    <button class="gameButton" onclick="openGame('basketbros')"><img src="https://tse1.mm.bing.net/th/id/OIP.MkkFvKP67HtHUq-Rv7g7zwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3">Basket Bros</button>
-    <button class="gameButton" onclick="openGame('papasbr')"><img src="https://tse1.mm.bing.net/th/id/OIP.rcAX2nBKaqNzcK6Zt7N96QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Papas Burgeria </button>
-    <button class="gameButton" onclick="openGame('crossyroad')"><img src="https://th.bing.com/th/id/R.a14d1c1943f8775a095ba54033e2ed80?rik=V7KD6RwQj4IBEw&riu=http%3a%2f%2fwww.androidpolice.com%2fwp-content%2fuploads%2f2016%2f04%2fnexus2cee_cr.png&ehk=x0CFo3ume%2bfNxewWDJMwWV8tbtXOdOq6bZKgignk7A4%3d&risl=&pid=ImgRaw&r=0">Crossy Road </button>
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>
+  <span style="vertical-align: 200px; font-size: 40px;">interstellar Games</span>
+  </h1>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
+    <button class="gameButton" onclick="openGame('subway')"><img src="https://tse3.mm.bing.net/th/id/OIP.THckrV-rsMX4P0KNJlK79QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Subway Surfers</button>
+    <button class="gameButton" onclick="openGame('geometrydash')"><img src="https://th.bing.com/th/id/R.2a527448abbb085f6c89793cfb5f65f5?rik=A7ss82CSOJPrkg&riu=http%3a%2f%2fvignette2.wikia.nocookie.net%2fgeometry-dash%2fimages%2f9%2f90%2fGeometryDash.png%2frevision%2flatest%3fcb%3d20160224042843&ehk=Hvk2rFdCmF08iQinZYieMsLbvo4NDNdKYic8xB6GqZE%3d&risl=&pid=ImgRaw&r=0">Geometry Dash</button>
+    <button class="gameButton" onclick="openGame('speedstars')"><img src="https://tse1.mm.bing.net/th/id/OIP.PTVRAhK2goOw54IqLAk8fgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Speed Stars</button>
+    <button class="gameButton" onclick="openGame('slope')"><img src="https://tse1.explicit.bing.net/th/id/OIP.e7UxgqNm5RP_ZHPdAeV_LQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3">Slope</button>
+    <button class="gameButton" onclick="openGame('scratchgame')"><img src="">Wheelie Life</button>
+    <button class="gameButton" onclick="openGame('motox3m')"><img src="https://ubg11.github.io/images/motox3m/moto-x3m-bike-race-logo.webp">Moto X3M</button>
+    <button class="gameButton" onclick="openGame('ovo')"><img src="https://zohoho.org/_kr/ovo.png?aaad">OvO</button>
+    <button class="gameButton" onclick="openGame('driftboss')"><img src="https://gamecollections.me/game/3kh0-assets-main/drift-boss/"; title='Drift Boss';}">Drift Boss</button>
+    <button class="gameButton" onclick="openGame('drivemad')"><img src="https://mathsframe.github.io/alllogo/drive-mad/logo.jpg">Drive Mad</button>
+    <button class="gameButton" onclick="openGame('retrobowl')"><img src="https://tse3.mm.bing.net/th/id/OIP.791W9zkcqUsgJfC5h6GO2gHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Retro Bowl</button>
+    <button class="gameButton" onclick="openGame('basketbros')"><img src="https://tse1.mm.bing.net/th/id/OIP.MkkFvKP67HtHUq-Rv7g7zwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3">Basket Bros</button>
+    <button class="gameButton" onclick="openGame('papasbr')"><img src="https://tse1.mm.bing.net/th/id/OIP.rcAX2nBKaqNzcK6Zt7N96QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3">Papas Burgeria </button>
+    <button class="gameButton" onclick="openGame('crossyroad')"><img src="https://th.bing.com/th/id/R.a14d1c1943f8775a095ba54033e2ed80?rik=V7KD6RwQj4IBEw&riu=http%3a%2f%2fwww.androidpolice.com%2fwp-content%2fuploads%2f2016%2f04%2fnexus2cee_cr.png&ehk=x0CFo3ume%2bfNxewWDJMwWV8tbtXOdOq6bZKgignk7A4%3d&risl=&pid=ImgRaw&r=0">Crossy Road </button>
 	<button class="gameButton" onclick="openGame('smashcarts')"><img src="https://api.web.gamepix.com/assets/img/250/250/icon/smash-karts.png">Smash Karts </button>
-
-  </div>
+  </div>
 </div>
 
 <div id="browserLoader" class="loaderScreen">
-  <button class="backButton" onclick="closeLoader()">← Back</button>
-  <h1>interstellar - Browser</h1>
-  <div class="browserControls">
-    <input type="text" id="browserInput" placeholder="Enter URL or search term">
-    <button onclick="goBrowser()">Go</button>
-    <button onclick="browserBack()">←</button>
-    <button onclick="browserForward()">→</button>
-    <button onclick="browserReload()">⟳</button>
-  </div>
-  <iframe id="browserFrame"></iframe>
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <h1>interstellar - Browser</h1>
+  <div class="browserControls">
+    <input type="text" id="browserInput" placeholder="Enter URL or search term">
+    <button onclick="goBrowser()">Go</button>
+    <button onclick="browserBack()">←</button>
+    <button onclick="browserForward()">→</button>
+    <button onclick="browserReload()">⟳</button>
+  </div>
+  <iframe id="browserFrame"></iframe>
 </div>
 
 <div id="gameWindow" class="loaderScreen">
-  <button class="backButton" onclick="closeGame()">← Back</button>
-  <button class="fullscreenButton" onclick="toggleFullscreen(currentGameUrl, currentGameTitle)">Launch Fullscreen</button>
-  <h1 id="gameTitle">interstellar Games</h1>
-  <div class="gameFrame" id="gameFrame">Game will appear here</div>
+  <button class="backButton" onclick="closeGame()">← Back</button>
+  <button class="fullscreenButton" onclick="toggleFullscreen(currentGameUrl, currentGameTitle)">Launch Fullscreen</button>
+  <h1 id="gameTitle">interstellar Games</h1>
+  <div class="gameFrame" id="gameFrame">Game will appear here</div>
 </div>
 
 <div id="creditsScreen" class="loaderScreen">
-  <button class="backButton" onclick="closeLoader()">← Back</button>
-  <div id="creditsContent" class="credits-content">
-    Credits to <span class="rainbow-glow">toxin.lol</span>
-  </div>
-  <div class="bottom-text">
-    hi-toxin.lol<3
-  </div>
+  <button class="backButton" onclick="closeLoader()">← Back</button>
+  <div id="creditsContent" class="credits-content">
+    Credits to <span class="rainbow-glow">toxin.lol</span>
+  </div>
+  <div class="bottom-text">
+    hi-toxin.lol<3
+  </div>
 </div>
 
 <script src="script.js"></script>
