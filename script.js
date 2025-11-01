@@ -260,8 +260,8 @@ function getGameDetails(game) {
     if(game==='geometrydash'){ url="https://geometry-dash-lite.io/gdl/"; title='Geometry Dash';}
     if(game==='speedstars'){ url="https://speedstars2.io/game/speed-stars/"; title='Speed Stars';}
     if(game==='slope'){ url="https://azgames.io/game/slope/"; title='Slope';}
-    if(game==='scratchgame'){ url="https://scratch.mit.edu/projects/1231016758/embed/"; title='Scratch Game';}
-    if(game==='motox3m'){ url="https://play.famobi.com/moto-x3m"; title='Moto X3M';}
+    if(game==='scratchgame'){ url="https://scratch.mit.edu/projects/1231016758/embed/"; title='Wheelie Life';}
+    if(game==='motox3m'){ url="https://gamecollections.me/game/3kh0-assets-main/motox3m/"; title='Moto X3M';}
     if(game==='ovo'){ url="https://gamecollections.me/game/3kh0-assets-main/ovo/"; title='OvO';}
     if(game==='driftboss'){ url="https://gamecollections.me/game/3kh0-assets-main/drift-boss/"; title='Drift Boss';}
     if(game==='drivemad'){ url="https://gamecollections.me/game/3kh0-assets-main/drive-mad/"; title='Drive Mad';}
