@@ -676,3 +676,58 @@ function createSnowflake() {
 
 setInterval(createSnowflake, 150);
 document.addEventListener('DOMContentLoaded', loadSettings);
+// --- ADMIN PANEL FUNCTIONALITY ---
+
+// Only show the admin button when settings is open
+const adminButton = document.getElementById('adminButton');
+const settingsScreen = document.getElementById('settingsScreen');
+const mainScreen = document.getElementById('mainScreen');
+function showAdminButtonIfSettings() {
+  if (settingsScreen.style.display === 'flex') {
+    adminButton.style.display = 'block';
+  } else {
+    adminButton.style.display = 'none';
+  }
+}
+setInterval(showAdminButtonIfSettings, 300); // simple polling (since open/close logic is custom)
+
+// Admin code prompt
+adminButton.onclick = function() {
+  let code = prompt('Enter admin code:');
+  if (code === 'toxin.lol!') {
+    document.getElementById('adminPanelOverlay').style.display = 'flex';
+  } else if (code !== null) {
+    alert('Wrong code!');
+  }
+};
+function closeAdminPanel() {
+  document.getElementById('adminPanelOverlay').style.display = 'none';
+}
+
+// Global message functionality (demo, local only)
+function sendGlobalMsg() {
+  const msg = document.getElementById('globalMsg').value.trim();
+  if (!msg) return alert('Please type a message.');
+  showGlobalMsgBar('toxin.lol: ' + msg);
+  document.getElementById('globalMsg').value = '';
+}
+function showGlobalMsgBar(msg) {
+  const bar = document.getElementById('globalMsgBar');
+  document.getElementById('globalMsgBarContent').textContent = msg;
+  bar.style.display = 'block';
+  setTimeout(() => {
+    bar.style.top = '18px';
+  }, 50);
+  setTimeout(() => {
+    bar.style.top = '-60px';
+    setTimeout(() => { bar.style.display = 'none'; }, 700);
+  }, 5000);
+}
+
+// Rainbow mode functionality (demo, local only)
+function makeWebsiteRainbow() {
+  document.querySelectorAll('h1, h2, .rainbow-glow, #mainScreen, #settingsScreen, #realLoader, #gamesLoader, #browserLoader, #creditsScreen, #gameWindow').forEach(el => {
+    el.classList.add('rainbow-glow');
+  });
+  alert('Rainbow mode enabled for all text!');
+}
